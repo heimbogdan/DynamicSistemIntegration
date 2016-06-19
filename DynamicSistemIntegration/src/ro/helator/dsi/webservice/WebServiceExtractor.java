@@ -14,7 +14,8 @@ public class WebServiceExtractor {
 	
 	public static File getWSDLFromURL(String urlPath, String serviceName) {
 
-		urlPath = urlPath.endsWith("?wsdl") ? urlPath : urlPath + "?wsdl";
+		urlPath = urlPath.endsWith("?wsdl") || 
+				urlPath.endsWith("?WSDL") ? urlPath : urlPath + "?wsdl";
 		
 		try {
 			URL wsdlUrl = new URL(urlPath);
@@ -30,10 +31,12 @@ public class WebServiceExtractor {
 			File wsdlFile = null;
 			if(sb.length() > 0){
 				wsdlFile = new File(TEMP_FOLDER + serviceName + ".wsdl");
-				FileWriter fwr = new FileWriter(wsdlFile);
-				fwr.write(sb.toString());
-				fwr.close();
-				
+				if(wsdlFile.getParentFile().exists() ? true : wsdlFile.getParentFile().mkdirs() && 
+						wsdlFile.createNewFile()){
+					FileWriter fwr = new FileWriter(wsdlFile);
+					fwr.write(sb.toString());
+					fwr.close();
+				}
 			}
 			return wsdlFile;
 		} catch (MalformedURLException e1) {
